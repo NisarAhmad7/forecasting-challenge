@@ -8,22 +8,25 @@ from pathlib import Path
 import sys
 
 
-
+# find the path of project to use from that 
 PROJECT_PATH = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_PATH))
-from src.prepocessing import preproce
+from src.prepocessing import preproce #here we wrrite becuase path can find the path if it be above the it can not find the path and that get error!
+
 
 project_path = Path.cwd().parent
 sys.path.insert(0, str(project_path))
 
+# make a path where we can save the model
 MODEL_PATH = PROJECT_PATH / "models" / "gradient_boosting.pkl"
 MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 def train():
+
     # preproce the data 
     x_train, x_test, y_train, y_test = preproce()
 
-    # My Cheaked model with good performance
+    # making the Model this model had the good performance
     model = MultiOutputRegressor(GradientBoostingRegressor(
     loss='squared_error',
     learning_rate=0.001,
@@ -36,19 +39,16 @@ def train():
 
     model.fit(x_train, y_train)
     pred = model.predict(x_test)
+
     mae = mean_absolute_error(y_test, pred)
     rmse = np.sqrt(mean_squared_error(y_test, pred))
 
     print(f"MAE ---> {mae}")
     print(f"RMSE ---> {rmse}")
 
-
-    if MODEL_PATH.exists():
-        print("Model Exist!")
-
-    else:
-        joblib.dump(model, MODEL_PATH)
-        print(f"Model saved in this path {MODEL_PATH}")
+    # save the MOdel
+    joblib.dump(model, MODEL_PATH)
+    print(f"Model saved in this path {MODEL_PATH}")
 
 if __name__=="__main__":
     

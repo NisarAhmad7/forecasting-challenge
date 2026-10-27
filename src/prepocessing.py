@@ -41,36 +41,17 @@ def preproce():
 
 
     # Feature Engineering: Count VMs in each metadata category
-    features = df.groupby("timestamp").agg(
-        vm_category_count=("vm_category", "nunique"),
-        virtual_core_count=("virtual_core_bucket", "nunique"),
-        memory_gb_count=("memory_gb_bucket", "nunique")
-    ).reset_index()
+    targets["cpu_lag_1"] = targets["aggregate_cpu_utilization"].shift(1)
+    targets["cpu_lag_2"] = targets["aggregate_cpu_utilization"].shift(2)
+    targets["cpu_lag_3"] = targets["aggregate_cpu_utilization"].shift(3)
 
-    # Combine features and targets
-    data = features.merge(
-        targets,
-        on="timestamp",
-        how="inner"
-    )
+    first_cpu = targets["aggregate_cpu_utilization"].iloc[0]
+    lag_columns = ["cpu_lag_1", "cpu_lag_2", "cpu_lag_3"]
 
-    # Ensure chronological order after merging
-    data = data.sort_values(
-        "timestamp"
-    ).reset_index(drop=True)
+    targets[lag_columns] = targets[lag_columns].fillna(first_cpu)
 
-    # Separate features (X) and targets (y)
-    x = data.drop(columns=[
-        "active_vm_count",
-        "aggregate_cpu_utilization"
-    ])
-
-    y = data[
-        [
-            "active_vm_count",
-            "aggregate_cpu_utilization"
-        ]
-    ]
+    x = targets[lag_columns]
+    y = targets[["active_vm_count", "aggregate_cpu_utilization"]]
 
     # Chronological train/test split:
     x_train = x.iloc[:110]
@@ -86,3 +67,7 @@ def preproce():
     y_test = y_test.to_numpy()
 
     return x_train, x_test, y_train, y_test
+
+
+if __name__=="__main__":
+    preproce()
