@@ -24,7 +24,7 @@ MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
 def train():
 
     # preproce the data 
-    x_train, x_test, y_train, y_test = preproce()
+    x_train, x_test, y_train, y_test,_ = preproce()
 
     # making the Model this model had the good performance
     model = MultiOutputRegressor(GradientBoostingRegressor(
@@ -46,6 +46,16 @@ def train():
     print(f"MAE ---> {mae}")
     print(f"RMSE ---> {rmse}")
 
+    print("=============== All Detailse =================")
+    # To shoe for both target the out put of the MAE and RMSE
+    print(f"Active VM Count MAE:{mean_absolute_error(y_test[:, 0], pred[:, 0])}")
+
+    print(f"CPU Utilization MAE:{mean_absolute_error(y_test[:, 1], pred[:, 1])}")
+
+    print(f"\nActive VM Count RMSE:{np.sqrt(mean_squared_error(y_test[:, 0], pred[:, 0]))}")
+
+    print(f"CPU Utilization RMSE:{np.sqrt(mean_squared_error(y_test[:, 1], pred[:, 1]))}")  
+
     # save the MOdel
     joblib.dump(model, MODEL_PATH)
     print(f"Model saved in this path {MODEL_PATH}")
@@ -53,6 +63,7 @@ def train():
 if __name__=="__main__":
     
     train()
+
 
 
 

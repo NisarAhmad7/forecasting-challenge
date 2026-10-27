@@ -18,19 +18,11 @@ OUTPUT_PATH = PROJECT_PATH / "predictions.csv"
 
 def predict():
 
-    x_train, x_test, y_train, y_test = preproce()
+    x_train, x_test, y_train, y_test, timestamps = preproce()
     # Model Load
     model = joblib.load(MODEL_PATH)
-
     pred = model.predict(x_test)
-
-    # get original timestamps from the aggregated dataset
-    targets = pd.read_csv(DATA_PATH)
-    timestamps = np.sort(targets["timestamp"].unique())
-    timestamps = timestamps[110:]
-
     assert len(timestamps) == len(pred), "Timestamp count does not match predictions"
-
 
     # add prediction to data frame to have one predctions.csv file 
     predictions = pd.DataFrame({

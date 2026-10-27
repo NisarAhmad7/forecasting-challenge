@@ -41,19 +41,27 @@ def preproce():
 
 
     # Feature Engineering: Count VMs in each metadata category
-    targets["cpu_lag_1"] = targets["aggregate_cpu_utilization"].shift(1)
-    targets["cpu_lag_2"] = targets["aggregate_cpu_utilization"].shift(2)
-    targets["cpu_lag_3"] = targets["aggregate_cpu_utilization"].shift(3)
+    # Sort data chronologically
+    targets = targets.sort_values("timestamp").reset_index(drop=True)
 
-    first_cpu = targets["aggregate_cpu_utilization"].iloc[0]
-    lag_columns = ["cpu_lag_1", "cpu_lag_2", "cpu_lag_3"]
+    # Create lag features using only past values
+    for col in ["aggregate_cpu_utilization", "active_vm_count"]:
+        for lag in [1, 2, 3]:
+            targets[f"{col}_lag_{lag}"] = targets[col].shift(lag)
 
-    targets[lag_columns] = targets[lag_columns].fillna(first_cpu)
+    # Remove rows without enough historical data
+    lag_columns = [
+        f"{col}_lag_{lag}"
+        for col in ["aggregate_cpu_utilization", "active_vm_count"]
+        for lag in [1, 2, 3]
+    ]
 
+    targets = targets.dropna(subset=lag_columns).reset_index(drop=True)
+
+    # Features and targets
     x = targets[lag_columns]
     y = targets[["active_vm_count", "aggregate_cpu_utilization"]]
-
-    # Chronological train/test split:
+        # Chronological train/test split:
     x_train = x.iloc[:110]
     x_test = x.iloc[110:]
 
@@ -66,8 +74,9 @@ def preproce():
     y_train = y_train.to_numpy()
     y_test = y_test.to_numpy()
 
-    return x_train, x_test, y_train, y_test
+    timestamps_test = targets["timestamp"].iloc[110:].to_numpy()
 
+    return x_train, x_test, y_train, y_test, timestamps_test
 
 if __name__=="__main__":
     preproce()
