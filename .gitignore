@@ -1,0 +1,54 @@
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# IDE and editor files
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# Test and coverage files
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build and distribution files
+build/
+dist/
+*.egg-info/
+
+# Model artifacts
+# Ignore generated models unless intentionally versioning the final model
+# models/*.pkl
+
+# Local datasets
+# Uncomment these if you do not want to upload the dataset to GitHub
+# data/*.csv
+# data/*.csv.gz

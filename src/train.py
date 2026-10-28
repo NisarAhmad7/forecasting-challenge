@@ -11,7 +11,7 @@ import sys
 # find the path of project to use from that 
 PROJECT_PATH = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_PATH))
-from src.prepocessing import preproce #here we wrrite becuase path can find the path if it be above the it can not find the path and that get error!
+from src.prepocessing import preproce,forecast_future #here we wrrite becuase path can find the path if it be above the it can not find the path and that get error!
 
 
 project_path = Path.cwd().parent
@@ -24,7 +24,10 @@ MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
 def train():
 
     # preproce the data 
-    x_train, x_test, y_train, y_test,_ = preproce()
+    x_train, y_train, y_test, timestamps_test, history = preproce()
+    print("x_train:", x_train.shape)
+    print("y_train:", y_train.shape)
+    print("y_test:", y_test.shape)
 
     # making the Model this model had the good performance
     model = MultiOutputRegressor(GradientBoostingRegressor(
@@ -38,7 +41,7 @@ def train():
     ))
 
     model.fit(x_train, y_train)
-    pred = model.predict(x_test)
+    pred = forecast_future(model, history, steps=24)
 
     mae = mean_absolute_error(y_test, pred)
     rmse = np.sqrt(mean_squared_error(y_test, pred))
@@ -48,13 +51,17 @@ def train():
 
     print("=============== All Detailse =================")
     # To shoe for both target the out put of the MAE and RMSE
-    print(f"Active VM Count MAE:{mean_absolute_error(y_test[:, 0], pred[:, 0])}")
+    print("Active VM Count MAE:",
+        mean_absolute_error(y_test[:, 0], pred[:, 0]))
 
-    print(f"CPU Utilization MAE:{mean_absolute_error(y_test[:, 1], pred[:, 1])}")
+    print("CPU Utilization MAE:",
+        mean_absolute_error(y_test[:, 1], pred[:, 1]))
 
-    print(f"\nActive VM Count RMSE:{np.sqrt(mean_squared_error(y_test[:, 0], pred[:, 0]))}")
+    print("Active VM Count RMSE:",
+        np.sqrt(mean_squared_error(y_test[:, 0], pred[:, 0])))
 
-    print(f"CPU Utilization RMSE:{np.sqrt(mean_squared_error(y_test[:, 1], pred[:, 1]))}")  
+    print("CPU Utilization RMSE:",
+        np.sqrt(mean_squared_error(y_test[:, 1], pred[:, 1])))  
 
     # save the MOdel
     joblib.dump(model, MODEL_PATH)
