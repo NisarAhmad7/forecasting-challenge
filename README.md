@@ -235,4 +235,4 @@ Forecast accuracy may also be affected by sudden workload changes and the limite
 **Nisar Ahmad Zamani**
 
 - GitHub: [NisarAhmad7](https://github.com/NisarAhmad7)
-- LinkedIn: Add your LinkedIn profile link here
+- LinkedIn: [LinkedIn_Profile](https://www.linkedin.com/in/nisar-ahmad-zamani-440769436/)
