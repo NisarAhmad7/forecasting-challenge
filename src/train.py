@@ -32,7 +32,7 @@ def train():
     # making the Model this model had the good performance
     model = MultiOutputRegressor(GradientBoostingRegressor(
     loss='squared_error',
-    learning_rate=0.001,
+    learning_rate=0.01,
     n_estimators=300,
     criterion='squared_error',
     max_depth=3,

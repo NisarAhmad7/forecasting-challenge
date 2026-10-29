@@ -1,0 +1,5 @@
+Model,Target,MAE,MSE,RMSE
+Persistence Baseline,active_vm_count,0.0,0.0,0.0
+Persistence Baseline,aggregate_cpu_utilization,0.1467824591504233,0.03414564063216761,0.18478539074333666
+Gradient Boosting,active_vm_count,0.0,0.0,0.0
+Gradient Boosting,aggregate_cpu_utilization,0.16643997783785602,0.039680717949734746,0.19920019565686864
